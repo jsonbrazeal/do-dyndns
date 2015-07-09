@@ -71,13 +71,22 @@ json_value()
 
 get_external_ip()
 {
-  ip_address="$(curl -s --connect-timeout $curl_timeout $url_ext_ip | sed -e 's/.*Current IP Address: //' -e 's/<.*$//' | egrep -o '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}')";
+  ip_address=$(dig @ns1.google.com -t txt o-o.myaddr.l.google.com +short | sed s/\"//g)
   if [ -z "$ip_address" ] ; then
-    ip_address="$(curl -s --connect-timeout $curl_timeout $url_ext_ip2 | egrep -o '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}')";
+    ip_address="$(curl -s --connect-timeout $curl_timeout $url_ext_ip | sed -e 's/.*Current IP Address: //' -e 's/<.*$//' | egrep -o '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}')";
     if [ -z "$ip_address" ] ; then
-      return 1;
+      ip_address="$(curl -s --connect-timeout $curl_timeout $url_ext_ip2 | egrep -o '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}')";
+      if [ -z "$ip_address" ] ; then
+        return 1;
+      else
+        echov "* Retrieved external IP from $url_ext_ip2";
+      fi
+    else
+      echov "* Retrieved external IP from $url_ext_ip";
+      return 0;
     fi
   else
+    echov "* Retrieved external IP from Google's nameservers using dig";
     return 0;
   fi
 }
@@ -143,16 +152,17 @@ new_record()
 }
 
 # start.
-echov "* Updating %s.%s: $(date +"%Y-%m-%d %H:%M:%S")\n\n" "$do_record" "$do_domain";
-
-echov "* Fetching external IP from: $url_ext_ip";
+echov "* Updating IP for %s.%s at $(date +"%Y-%m-%d %H:%M:%S")\n" "$do_record" "$do_domain";
+echov "* Fetching external IP...";
 get_external_ip;
 if [ $? -ne 0 ] ; then
   echov "Unable to extract external IP address";
   exit 1;
 fi
 
-echov "* Fetching Record ID for: $do_record";
+echov "* External IP is $ip_address";
+
+echov "* Fetching DO DNS Record ID for: $do_record";
 just_added=false;
 declare -A record;
 get_record;
@@ -186,5 +196,5 @@ if [ $update_only == true ] || [ $just_added != true ] ; then
   fi
 fi
 
-echov "\n* IP Address successfully added/updated.\n\n" "";
+echov "* IP Address successfully added/updated.\n\n" "";
 exit 0;
