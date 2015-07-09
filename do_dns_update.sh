@@ -16,7 +16,7 @@ filename="$(basename $BASH_SOURCE)";
 # check for access token
 if [ -z "$do_access_token" ] ; then
   echo "No access token provided.";
-  return 1;
+  exit 1;
 fi
 
 # get options.
