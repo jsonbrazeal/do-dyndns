@@ -13,6 +13,12 @@ verbose=true;
 filename="$(basename $BASH_SOURCE)";
 ## END EDIT.
 
+# check for access token
+if [ -z "$do_access_token" ] ; then
+  echo "No access token provided.";
+  return 1;
+fi
+
 # get options.
 while getopts "ush" opt; do
   case $opt in
