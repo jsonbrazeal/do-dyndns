@@ -2,7 +2,9 @@
 # @requires awk, curl, grep, mktemp, sed, tr.
 
 ## START EDIT HERE.
-do_access_token="";
+api_key=$(cat /home/jsonbrazeal/DigitalOceanDynDNS/api_key.txt);
+device_registration_id=$(cat /home/jsonbrazeal/DigitalOceanDynDNS/device_registration_id.txt);
+do_access_token=$(cat /home/jsonbrazeal/DigitalOceanDynDNS/do_access_token.txt);
 curl_timeout="15";
 loop_max_records="50";
 url_do_api="https://api.digitalocean.com/v2";
@@ -167,7 +169,8 @@ if [ $? -ne 0 ] ; then
 fi
 
 echov "* External IP is $ip_address";
-
+echov "* Sending external IP to Android through Google Cloud Messaging";
+curl -X POST -H "Authorization: key=$api_key"  -H "Content-Type: application/json" -d '{ "registration_ids": ["'"$device_registration_id"'"], "data": { "message": "'"$ip_address"' -  dell-json.jasonbrazeal.com" } }'  https://android.googleapis.com/gcm/send
 echov "* Fetching DO DNS Record ID for: $do_record";
 just_added=false;
 declare -A record;
@@ -188,7 +191,7 @@ if [ $? -ne 0 ] ; then
 fi
 
 if [ $update_only == true ] || [ $just_added != true ] ; then
-  echov "* Comparing ${record[data]} to $ip_address";
+  echov "* Comparing DO record (${record[data]}) to current ip ($ip_address)";
   if [ "${record[data]}" == "$ip_address" ] ; then
     echov "Record $do_record.$do_domain already set to $ip_address";
     exit 1;
