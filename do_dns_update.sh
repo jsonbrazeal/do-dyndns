@@ -21,6 +21,18 @@ if [ -z "$do_access_token" ] ; then
   exit 1;
 fi
 
+# check for api key
+if [ -z "$api_key" ] ; then
+  echo "No api key provided.";
+  exit 1;
+fi
+
+# check for device registration id
+if [ -z "$device_registration_id" ] ; then
+  echo "No device registration id provided.";
+  exit 1;
+fi
+
 # get options.
 while getopts "ush" opt; do
   case $opt in
