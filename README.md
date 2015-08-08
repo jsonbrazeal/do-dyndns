@@ -43,6 +43,7 @@ My use case: *Connect to home server that is on a dynamic IP via a fixed domain 
 
 The MIT License (MIT).
 
-## Fork jsonbrazeal/DigitalOceanDynDNS
+## Fork jsonbrazeal/do-dyndns
 
-* Added Google nameserver dig check before http checks to retrieve external IP
+* Added Google nameserver dig check before http checks to retrieve external IP address
+* Added Google Cloud Messaging when external IP address changes
