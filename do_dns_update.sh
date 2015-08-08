@@ -34,6 +34,11 @@ if [ -z "$device_registration_id" ] ; then
   exit 1;
 fi
 
+android_message()
+{
+curl -X POST -H "Authorization: key=$api_key"  -H "Content-Type: application/json" -d '{ "registration_ids": ["'"$device_registration_id"'"], "data": { "message": "'"$1"'" } }'  https://android.googleapis.com/gcm/send
+}
+
 # get options.
 while getopts "ush" opt; do
   case $opt in
@@ -185,8 +190,11 @@ echov "* External IP is $ip_address";
 
 if [ "$old_ip_address" != "$ip_address" ]; then
   echov "* External IP address has changed..sending to Android through Google Cloud Messaging";
-  curl -X POST -H "Authorization: key=$api_key"  -H "Content-Type: application/json" -d '{ "registration_ids": ["'"$device_registration_id"'"], "data": { "message": "'"$ip_address"' -  dell-json.jasonbrazeal.com" } }'  https://android.googleapis.com/gcm/send
+  android_message "$ip_address -  dell-json.jasonbrazeal.com"
 fi
+
+# update ip address on file
+echo -n $ip_address > ./old_ip_address.txt
 
 echov "* Fetching DO DNS Record ID for: $do_record";
 just_added=false;
@@ -223,5 +231,5 @@ if [ $update_only == true ] || [ $just_added != true ] ; then
 fi
 
 echov "* IP Address successfully added/updated.\n\n" "";
-curl -X POST -H "Authorization: key=$api_key"  -H "Content-Type: application/json" -d '{ "registration_ids": ["'"$device_registration_id"'"], "data": { "message": "DNS record for dell-json.jasonbrazeal.com updated" } }'  https://android.googleapis.com/gcm/send
+android_message "DNS record for dell-json.jasonbrazeal.com updated"
 exit 0;
