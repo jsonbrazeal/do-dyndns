@@ -178,11 +178,12 @@ new_record()
 }
 
 # start.
-echov "* Updating IP for %s.%s at $(date +"%Y-%m-%d %H:%M:%S")\n" "$do_record" "$do_domain";
+echov "************************************************"
+echov "* %s running for address %s.%s at $(date +"%Y-%m-%d %H:%M:%S")\n" "$(basename $0)" "$do_record" "$do_domain";
 echov "* Fetching external IP...";
 get_external_ip;
 if [ $? -ne 0 ] ; then
-  echov "Unable to extract external IP address";
+  echov "%s\n" "------------->Unable to extract external IP address";
   exit 1;
 fi
 
@@ -191,6 +192,8 @@ echov "* External IP is $ip_address";
 if [ "$old_ip_address" != "$ip_address" ]; then
   echov "* External IP address has changed..sending to Android through Google Cloud Messaging";
   android_message "$ip_address -  dell-json.jasonbrazeal.com"
+else
+  echov "* External IP address has not changed";
 fi
 
 # update ip address on file
@@ -202,13 +205,13 @@ declare -A record;
 get_record;
 if [ $? -ne 0 ] ; then
   if [ $update_only == true ] ; then
-    echov "Unable to find requested record in DO account";
+    echov "%s\n" "------------->Unable to find requested record in DO account";
     exit 1;
   else
     echov "* No record found. Adding: $do_record";
     new_record "$ip_address";
     if [ $? -ne 0 ] ; then
-      echov "Unable to add new record";
+      echov "%s\n" "------------->Unable to add new record";
       exit 1;
     fi
     just_added=true;
@@ -218,18 +221,18 @@ fi
 if [ $update_only == true ] || [ $just_added != true ] ; then
   echov "* Comparing DO record (${record[data]}) to current ip ($ip_address)";
   if [ "${record[data]}" == "$ip_address" ] ; then
-    echov "Record $do_record.$do_domain already set to $ip_address";
+    echov "%s\n" "------------->Record $do_record.$do_domain already set to $ip_address";
     exit 1;
   fi
 
   echov "* Updating record ${record[name]}.$do_domain to $ip_address";
   set_record_ip "${record[id]}" "$ip_address";
   if [ $? -ne 0 ] ; then
-    echov "Unable to update IP address";
+    echov "%s\n" "------------->Unable to update IP address";
     exit 1;
   fi
 fi
 
-echov "* IP Address successfully added/updated.\n\n" "";
+echov "%s\n" "------------->IP Address successfully added/updated.";
 android_message "DNS record for dell-json.jasonbrazeal.com updated"
 exit 0;
