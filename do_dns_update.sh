@@ -229,6 +229,7 @@ if [ $update_only == true ] || [ $just_added != true ] ; then
   set_record_ip "${record[id]}" "$ip_address";
   if [ $? -ne 0 ] ; then
     echov "%s\n" "------------->Unable to update IP address";
+    android_message "IP address for dell-json.jasonbrazeal.com changed to $ip_address, but unable to update Digital Ocean DNS record."
     exit 1;
   fi
 fi
