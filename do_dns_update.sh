@@ -2,10 +2,10 @@
 # @requires awk, curl, grep, mktemp, sed, tr.
 
 ## START EDIT HERE.
-old_ip_address=$(cat ./old_ip_address.txt);
-api_key=$(cat ./api_key.txt);
-device_registration_id=$(cat ./device_registration_id.txt);
-do_access_token=$(cat ./do_access_token.txt);
+old_ip_address=$(cat $HOME/do_dyndns/old_ip_address.txt);
+api_key=$(cat $HOME/do_dyndns/api_key.txt);
+device_registration_id=$(cat $HOME/do_dyndns/device_registration_id.txt);
+do_access_token=$(cat $HOME/do_dyndns/do_access_token.txt);
 curl_timeout="15";
 loop_max_records="50";
 url_do_api="https://api.digitalocean.com/v2";
