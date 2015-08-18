@@ -197,7 +197,7 @@ else
 fi
 
 # update ip address on file
-echo -n $ip_address > ./old_ip_address.txt
+echo -n $ip_address > $HOME/do_dyndns/old_ip_address.txt
 
 echov "* Fetching DO DNS Record ID for: $do_record";
 just_added=false;
