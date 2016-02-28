@@ -191,7 +191,7 @@ echov "* External IP is $ip_address";
 
 if [ "$old_ip_address" != "$ip_address" ]; then
   echov "* External IP address has changed..sending to Android through Google Cloud Messaging";
-  android_message "$ip_address -  dell-json.jasonbrazeal.com"
+  android_message "$ip_address -  home network"
 else
   echov "* External IP address has not changed";
 fi
@@ -229,11 +229,11 @@ if [ $update_only == true ] || [ $just_added != true ] ; then
   set_record_ip "${record[id]}" "$ip_address";
   if [ $? -ne 0 ] ; then
     echov "%s\n" "------------->Unable to update IP address";
-    android_message "IP address for dell-json.jasonbrazeal.com changed to $ip_address, but unable to update Digital Ocean DNS record."
+    android_message "IP address for home network changed to $ip_address, but unable to update Digital Ocean DNS record."
     exit 1;
   fi
 fi
 
 echov "%s\n" "------------->IP Address successfully added/updated.";
-android_message "DNS record for dell-json.jasonbrazeal.com updated"
+android_message "DNS record for home network updated"
 exit 0;
