@@ -196,7 +196,7 @@ echov "* External IP is $ip_address";
 
 if [ "$old_ip_address" != "$ip_address" ]; then
   echov "* External IP address has changed..sending to Android through Google Cloud Messaging";
-  android_message "$ip_address -  home network"
+  android_message "new home network ip: $ip_address"
 else
   echov "* External IP address has not changed";
 fi
