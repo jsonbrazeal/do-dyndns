@@ -187,6 +187,11 @@ if [ $? -ne 0 ] ; then
   exit 1;
 fi
 
+if ! [[ $ip_address =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+  echov "%s\n" "------------->Unable to extract external IP address";
+  exit 1;
+fi
+
 echov "* External IP is $ip_address";
 
 if [ "$old_ip_address" != "$ip_address" ]; then
